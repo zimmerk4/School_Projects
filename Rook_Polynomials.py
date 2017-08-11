@@ -85,12 +85,10 @@ class Board:
             prnt_str += "\n"
         return prnt_str
 
-    def is_square(self):
-        for row in self.board:
-            for val in self.board[row]:
-                if self.board[row][val] == 0:
-                    return False
-        return True
+    # def is_square(self):
+    #     if len(set(self.board.values().values())) == 1:
+    #         return True
+    #     return False
 
     def build_B_i_and_B_e(self):
         B_i = Board(self.height, self.width, {})
@@ -129,4 +127,7 @@ print(board)
 # print()
 # print(b_i)
 print()
-print(board.find_rook_polynomial())
+# print(board.find_rook_polynomial())
+print(list(board.board.values()))
+s = set(list(i.values()) for i in list(board.board.values()))
+print(s)
