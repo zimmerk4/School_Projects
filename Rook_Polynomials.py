@@ -85,6 +85,13 @@ class Board:
             prnt_str += "\n"
         return prnt_str
 
+    def is_square(self):
+        for row in self.board:
+            for val in self.board[row]:
+                if self.board[row][val] == 0:
+                    return False
+        return True
+
     def build_B_i_and_B_e(self):
         B_i = Board(self.height, self.width, {})
         B_i.board = copy.deepcopy(self.board)
@@ -103,14 +110,12 @@ class Board:
 
     def find_rook_polynomial(self):
         R_of_B = Polynomial([])
-        if len(self.board) == 1:
-            vals = [v for v in self.board.values()]
-            if len(vals[0]) == 1:
-                if len(self.board) == 0:
-                    return Polynomial([1])
-                for k in range(self.height + 1):
-                    R_of_B.coefs.append(binomial(self.height, k)*binomial(self.height, k)*math.factorial(k))
-                return R_of_B
+        if len(self.board) == 0:
+            return Polynomial([1])
+        if self.is_square():
+            for k in range(self.height + 1):
+                R_of_B.coefs.append(binomial(self.height, k)*binomial(self.height, k)*math.factorial(k))
+            return R_of_B
         B_i, B_e = self.build_B_i_and_B_e()
         R_of_B = B_i.find_rook_polynomial() + B_e.find_rook_polynomial()
         return R_of_B
