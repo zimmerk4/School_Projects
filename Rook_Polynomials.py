@@ -80,45 +80,42 @@ class Board:
             prnt_str += "\n"
         return prnt_str
 
-    def is_single_cell(self):
-        rows = []
-        for row in self.board.values():
-            rows.append(int("".join(str(x) for x in row.values()), 2))
-        cells = []
-        for n in rows:
-            cells.append(number_of_set_bits(n))
-        if cells.count(1) == 1 and set(cells) == {0, 1}:
+    def __is_single_cell(self):
+        rows = self.__rows_to_ints()
+        if rows.count(1) == 1 and set(rows) == {0, 1}:
             return True
         return False
 
-    def str_rep(self):
-        rows = ""
-        for row in self.board.values():
-            rows += str(int("".join(str(x) for x in row.values()), 2))
-        return rows
-
-    def is_rectangular(self):
+    def __rows_to_ints(self):
         rows = []
-        x = 0
-        y = 0
         for row in self.board.values():
             rows.append(int("".join(str(x) for x in row.values()), 2))
-        cells = []
-        for n in rows:
-            cells.append(number_of_set_bits(n))
-        cell_elems = set(cells)
-        if cells.count(1) == 1 and cell_elems == {0, 1}:
+        return tuple(rows)
+
+    def __str_rep(self):
+        return "".join(str(x) for x in self.__rows_to_ints())
+
+    def __find_rect(self):
+        rows = self.__rows_to_ints()
+        row_vals = set(rows) - {0}
+        if len(row_vals) == 1:
+            val = next(iter(row_vals))
+            if self.__is_block(val):
+                x = self.__find_msb(val) - self.__find_lsb(val) + 1
+                first = rows.index(val)
+                last = len(rows) - rows[::-1].index(val)
+                if len(set(rows[first:last])) == 1:
+                    y = last - first
+                    return True, x, y
+        return False, None, None
+
+    def __is_empty(self):
+        rows = self.__rows_to_ints()
+        if rows.count(0) == len(rows):
             return True
         return False
 
-    def is_empty(self):
-        rows = set(tuple(i.values()) for i in list(self.board.values()))
-        if len(rows) == 1:
-            if int("".join(str(x) for x in rows.pop()), 2) == 0:
-                return True
-        return False
-
-    def build_B_i_and_B_e(self):
+    def __build_B_i_and_B_e(self):
         B_i = Board(self.height, self.width, {})
         B_i.board = copy.deepcopy(self.board)
         B_e = Board(self.height, self.width, {})
@@ -134,33 +131,63 @@ class Board:
                     B_e.board[i][j] = 0
                     return B_i, B_e
 
+    def __binomial(self, n, k):
+        if n > 0:
+            return int(
+                math.factorial(n) / (math.factorial(k) * math.factorial(n - k)))
+        elif n == 0:
+            return 0
+        elif n < 0:
+            return None
+
+    def __rect_frp(self, x, y):
+        poly = Polynomial([])
+        for k in range(min(x,y) + 1):
+            poly.coefs.append(self.__binomial(x, k) * self.__binomial(y, k)
+                              * math.factorial(k))
+        return poly
+
+    def __number_of_set_bits(self, n):
+        """
+        Taken from:
+        https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSet64
+        """
+        c = ((n & 0xfff) * 0x1001001001001 & 0x84210842108421) % 0x1f
+        c += (((n & 0xfff000) >> 12) * 0x1001001001001 & 0x84210842108421) %0x1f
+        c += ((n >> 24) * 0x1001001001001 & 0x84210842108421) % 0x1f
+        return c
+
+    def __find_msb(self, n):
+        if n == 0:
+            return 0
+        return math.floor(math.log(n, 10)/math.log(2, 10)) + 1
+
+    def __find_lsb(self, n):
+        return self.__find_msb(n & ~(n-1))
+
+    def __is_block(self, n):
+        x_1 = self.__find_msb(n)
+        x_2 = self.__find_lsb(n)
+        cnt = self.__number_of_set_bits(n)
+        return (cnt - 1) == (x_1 - x_2)
+
     def find_rook_polynomial(self):
-        if self.is_empty():
+        is_rect, x, y = self.__find_rect()
+        if self.__is_empty():
             return Polynomial([1])
-        elif self.is_single_cell():
+        elif self.__is_single_cell():
             return Polynomial([1, 1])
-        elif self.str_rep() in self.POLYNOMIAL_CACHE:
-            return self.POLYNOMIAL_CACHE[self.str_rep()]
+        elif is_rect:
+            R_of_B = self.__rect_frp(x,y)
+            self.POLYNOMIAL_CACHE[self.__rows_to_ints()] = R_of_B
+            return R_of_B
+        elif self.__rows_to_ints() in self.POLYNOMIAL_CACHE:
+            return self.POLYNOMIAL_CACHE[self.__rows_to_ints()]
         else:
-            B_i, B_e = self.build_B_i_and_B_e()
+            B_i, B_e = self.__build_B_i_and_B_e()
             R_of_B = B_e.find_rook_polynomial() + (B_i.find_rook_polynomial() * Polynomial([0, 1]))
-            self.POLYNOMIAL_CACHE[self.str_rep()] = R_of_B
+        self.POLYNOMIAL_CACHE[self.__rows_to_ints()] = R_of_B
         return R_of_B
-
-
-def binomial(n, k):
-    if n > 0:
-        return int(math.factorial(n)/(math.factorial(k) * math.factorial(n - k)))
-    elif n == 0:
-        return 0
-    elif n < 0:
-        return None
-
-
-def number_of_set_bits(i):
-    i -= (i >> 1) & 0x55555555
-    i = (i & 0x33333333) + ((i >> 2) & 0x33333333)
-    return (((i + (i >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24
 
 
 def main():
@@ -181,6 +208,7 @@ def main():
     print("rook polynomial: ", brd.find_rook_polynomial())
     print("run time: ", round(time.time() - start, 3), "seconds")
 
-# main()
-brd = Board(8, 8, {(i, i) for i in range(8)})
-print(brd.find_rook_polynomial())
+if __name__ == "__main__":
+    main()
+
+
