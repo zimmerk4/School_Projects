@@ -191,13 +191,18 @@ class Board:
 
 
 def main():
-    hw = input("Input height and width of board separated by a comma and hit enter: ")
+    hw = input(
+        "Input height and width of board separated by a comma and hit enter: ")
     h = int(hw[:hw.index(',')])
     w = int(hw[hw.index(',') + 1:])
-    b = set(input("Input space separated tuples of forbidden squares. i.e 0,1 1,0 2,5...: ").strip(" ").split(' '))
+    b = set(input("Input space separated tuples of forbidden squares and hit "
+                  "enter. Leave blank for full board. i.e 0,1 1,0 2,5...: "
+                  ).strip(" ").split(' '))
     bad = set()
-    for elem in b:
-        bad.add((int(elem[0]), int(elem[2])))
+    print(b)
+    if b != {''}:
+        for elem in b:
+            bad.add((int(elem[0]), int(elem[2])))
     print("\nheight: ", h)
     print("width: ", w)
     print("forbidden squares: ", bad)
