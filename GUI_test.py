@@ -22,11 +22,11 @@ class Window(wx.Frame):
         menu_bar.Append(edit_button, "Edit")
 
         name_box = wx.TextEntryDialog(None, "What is your name?", "Welcome",
-                                      "name")
+                                      "name...")
         if name_box.ShowModal() == wx.ID_OK:
             user_name = name_box.GetValue()
 
-        yes_no_box = wx.MessageDialog(None, "Poop fart?", "Serious Question",
+        yes_no_box = wx.MessageDialog(None, "Yes or no?", "Serious Question",
                                       wx.YES_NO)
         yes_no_answer = yes_no_box.ShowModal()
         yes_no_box.Destroy()
@@ -36,10 +36,10 @@ class Window(wx.Frame):
 
 
         if yes_no_answer == wx.ID_NO:
-            user_name = "FartPoop"
+            user_name = "Loser"
 
         choose_one_box = wx.SingleChoiceDialog(None, "Pick one:", "Picky Picky",
-                                               ["Poop", "Fart"])
+                                               ["Yes", "No"])
         if choose_one_box.ShowModal() == wx.ID_OK:
             fav_poop_fart = choose_one_box.GetStringSelection()
 
@@ -47,14 +47,14 @@ class Window(wx.Frame):
         self.Bind(wx.EVT_MENU, self.quit, exit_item)
         self.SetTitle("Welcome " + user_name)
 
-        poop_text = wx.StaticText(panel, -1, "Pooping Farts", (3, 3))
-        poop_text.SetForegroundColour("brown")
-        poop_text.SetBackgroundColour("yellow")
-        poopiest_text = wx.StaticText(panel, -1, "Poopiest Farts", (3, 30))
-        poopiest_text. SetForegroundColour("brown" if fav_poop_fart == "Poop"
-                                           else "yellow")
-        poopiest_text. SetForegroundColour("brown" if fav_poop_fart == "Poop"
-                                           else "yellow")
+        test_text = wx.StaticText(panel, -1, "Test", (3, 3))
+        test_text.SetForegroundColour("green")
+        test_text.SetBackgroundColour("white")
+        testier_text = wx.StaticText(panel, -1, "test", (3, 30))
+        testier_text. SetForegroundColour("green" if fav_poop_fart == "Yes"
+                                           else "white")
+        testier_text. SetBackgroundColour("white" if fav_poop_fart == "Yes"
+                                           else "green")
 
 
     def quit(self, e):
