@@ -27,7 +27,6 @@ class QuoteSpider(scrapy.Spider):
                 "tags": quote.xpath(tags_path).extract()
             }
         next_page = response.xpath(next_path).extract_first()
-        print(next_page)
         if next_page is not None:
             next_page = response.urljoin(next_page)
             yield scrapy.Request(url=next_page, callback=self.parse)
