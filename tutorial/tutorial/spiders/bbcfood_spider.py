@@ -25,7 +25,7 @@ class BBCFoodSpider(scrapy.Spider):
         print(response.url)
         if response.url != "http://www.bbc.co.uk/food/cuisines":
             yield {"title": response.xpath(cuisine_path).extract_first(),
-                   "test": response.xpath(test_path).extract_first()}
+                   "t.py": response.xpath(test_path).extract_first()}
         for cuisine in response.xpath(root_path):
             next_page = cuisine.xpath(next_path).extract_first()
             if next_page is not None:

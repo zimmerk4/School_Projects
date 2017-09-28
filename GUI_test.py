@@ -50,7 +50,7 @@ class Window(wx.Frame):
         test_text = wx.StaticText(panel, -1, "Test", (3, 3))
         test_text.SetForegroundColour("green")
         test_text.SetBackgroundColour("white")
-        testier_text = wx.StaticText(panel, -1, "test", (3, 30))
+        testier_text = wx.StaticText(panel, -1, "t.py", (3, 30))
         testier_text. SetForegroundColour("green" if fav_poop_fart == "Yes"
                                            else "white")
         testier_text. SetBackgroundColour("white" if fav_poop_fart == "Yes"
