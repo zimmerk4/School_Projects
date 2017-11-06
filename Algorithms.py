@@ -30,7 +30,7 @@ def merge_count(A, p, q, r):
             else:
                 B.append(A[j])
                 j += 1
-                count += q + 1 - i
+                count += j - i
         elif i == q + 1:
             B.extend(A[j:r+1])
             j = r+1
@@ -56,11 +56,11 @@ def merge_sort(A, p, r):
 A = [7, 12, 2, 3, 10, 4, 20]
 B = [4, 2, 5, 3, 1]
 
-print(A)
-print()
-BuildMaxHeap(A)
-print(A)
-print()
+# print(A)
+# print()
+# BuildMaxHeap(A)
+# print(A)
+# print()
 print(B)
 print(merge_sort(B, 1, len(B)))
 print(B)
