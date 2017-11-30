@@ -37,7 +37,7 @@ def merge_count(A, p, q, r):
         else:
             B.extend(A[i:q+1])
             i = q + 1
-        flag += 1
+         flag += 1
     A[p:r] = B[:r-p+1]
     return count
 
